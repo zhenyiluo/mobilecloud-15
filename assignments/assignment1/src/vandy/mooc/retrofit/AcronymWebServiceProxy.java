@@ -4,6 +4,7 @@ import java.util.List;
 
 import retrofit.http.GET;
 import retrofit.http.Query;
+import vandy.mooc.retrofit.AcronymData.AcronymExpansion;
 
 /**
  * Retrofit Service to send requests to Acronym web service and
@@ -30,6 +31,6 @@ public interface AcronymWebServiceProxy {
      * @return List of JsonAcronym
      */
     @GET("/dictionary.py")
-    public List<AcronymData> getAcronymResults
+    public List<AcronymExpansion> getAcronymResults
         (@Query(SHORT_FORM_QUERY_PARAMETER) String shortForm);
 }
