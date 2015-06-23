@@ -165,9 +165,11 @@ public class AcronymProvider extends ContentProvider {
 				// TODO -- write the code that inserts all the
 				// contentValues into the SQLite database.
 				for (ContentValues values : contentValues) {
-					db.insert(AcronymContract.AcronymEntry.TABLE_NAME, null,
+					final long id = db.insert(AcronymContract.AcronymEntry.TABLE_NAME, null,
 							values);
-					returnCount++;
+					if(id != -1){
+						returnCount++;
+					}
 				}
 
 				// Marks the current transaction as successful.
