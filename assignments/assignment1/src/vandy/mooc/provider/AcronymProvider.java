@@ -1,5 +1,6 @@
 package vandy.mooc.provider;
 
+import vandy.mooc.provider.AcronymContract.AcronymEntry;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -119,7 +120,7 @@ public class AcronymProvider extends ContentProvider {
 		case ACRONYMS:
 			// TODO - replace 0 with code that inserts a row in Table
 			// and returns the row id.
-			long id = db.insert(AcronymContract.PATH_ACRONYM, "", values);
+			long id = db.insert(AcronymContract.AcronymEntry.TABLE_NAME, "", values);
 
 			// Check if a new row is inserted or not.
 			if (id > 0)
@@ -163,7 +164,7 @@ public class AcronymProvider extends ContentProvider {
 				// TODO -- write the code that inserts all the
 				// contentValues into the SQLite database.
 				for (ContentValues values : contentValues) {
-					db.insert(AcronymContract.PATH_ACRONYM, "", values);
+					db.insert(AcronymContract.AcronymEntry.TABLE_NAME, "", values);
 					returnCount++;
 				}
 
@@ -200,7 +201,7 @@ public class AcronymProvider extends ContentProvider {
 			// entire SQLite database based on the parameters passed
 			// into the method.
 			retCursor = queryBuilder
-					.query(mOpenHelper.getWritableDatabase(), projection,
+					.query(mOpenHelper.getReadableDatabase(), projection,
 							selection, selectionArgs, null, null, sortOrder);
 			break;
 		case ACRONYM:
@@ -214,7 +215,7 @@ public class AcronymProvider extends ContentProvider {
 			// subset of) the parameters passed into the method.
 			addRowIdCheckToWhereStatement(selection, rowId);
 			retCursor = queryBuilder
-					.query(mOpenHelper.getWritableDatabase(), projection,
+					.query(mOpenHelper.getReadableDatabase(), projection,
 							selection, selectionArgs, null, null, sortOrder);
 			break;
 		default:
@@ -254,7 +255,7 @@ public class AcronymProvider extends ContentProvider {
 			// TODO -- replace "0" with a call to the SQLite database
 			// to update the row(s) in the database based on the
 			// parameters passed into this method.
-			rowsUpdated = db.update(AcronymContract.PATH_ACRONYM, values,
+			rowsUpdated = db.update(AcronymContract.AcronymEntry.TABLE_NAME, values,
 					selection, selectionArgs);
 			break;
 		default:
@@ -293,7 +294,7 @@ public class AcronymProvider extends ContentProvider {
 			// TODO -- replace "0" with code that deletes the row(s)
 			// in the SQLite database table based on the parameters
 			// passed into the method.
-			rowsDeleted = db.delete(AcronymContract.PATH_ACRONYM, selection,
+			rowsDeleted = db.delete(AcronymContract.AcronymEntry.TABLE_NAME, selection,
 					selectionArgs);
 			break;
 		default:
@@ -314,6 +315,6 @@ public class AcronymProvider extends ContentProvider {
 		} else {
 			newWhereStatement = whereStatement + " AND ";
 		}
-		return newWhereStatement + " id = " + id;
+		return newWhereStatement + " " + AcronymContract.AcronymEntry._ID + " = " + id;
 	}
 }

@@ -3,7 +3,6 @@ package vandy.mooc.provider.cache;
 import java.util.ArrayList;
 import java.util.List;
 
-import vandy.mooc.provider.AcronymContract;
 import vandy.mooc.provider.AcronymContract.AcronymEntry;
 import vandy.mooc.retrofit.AcronymData.AcronymExpansion;
 import android.app.AlarmManager;
@@ -200,8 +199,7 @@ public class ContentProviderTimeoutCache
                           List<AcronymExpansion> longForms,
                           long timeout) {
         // Check if the List is not null or empty.
-        if (longForms.isEmpty() 
-            || longForms == null) 
+        if (longForms == null || longForms.isEmpty()) 
             return -1;
 
         // Calculate the Expiration time.
