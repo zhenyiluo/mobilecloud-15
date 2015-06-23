@@ -120,7 +120,8 @@ public class AcronymProvider extends ContentProvider {
 		case ACRONYMS:
 			// TODO - replace 0 with code that inserts a row in Table
 			// and returns the row id.
-			long id = db.insert(AcronymContract.AcronymEntry.TABLE_NAME, "", values);
+			long id = db.insert(AcronymContract.AcronymEntry.TABLE_NAME, null,
+					values);
 
 			// Check if a new row is inserted or not.
 			if (id > 0)
@@ -164,7 +165,8 @@ public class AcronymProvider extends ContentProvider {
 				// TODO -- write the code that inserts all the
 				// contentValues into the SQLite database.
 				for (ContentValues values : contentValues) {
-					db.insert(AcronymContract.AcronymEntry.TABLE_NAME, "", values);
+					db.insert(AcronymContract.AcronymEntry.TABLE_NAME, null,
+							values);
 					returnCount++;
 				}
 
@@ -255,8 +257,8 @@ public class AcronymProvider extends ContentProvider {
 			// TODO -- replace "0" with a call to the SQLite database
 			// to update the row(s) in the database based on the
 			// parameters passed into this method.
-			rowsUpdated = db.update(AcronymContract.AcronymEntry.TABLE_NAME, values,
-					selection, selectionArgs);
+			rowsUpdated = db.update(AcronymContract.AcronymEntry.TABLE_NAME,
+					values, selection, selectionArgs);
 			break;
 		default:
 			throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -294,8 +296,8 @@ public class AcronymProvider extends ContentProvider {
 			// TODO -- replace "0" with code that deletes the row(s)
 			// in the SQLite database table based on the parameters
 			// passed into the method.
-			rowsDeleted = db.delete(AcronymContract.AcronymEntry.TABLE_NAME, selection,
-					selectionArgs);
+			rowsDeleted = db.delete(AcronymContract.AcronymEntry.TABLE_NAME,
+					selection, selectionArgs);
 			break;
 		default:
 			throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -315,6 +317,7 @@ public class AcronymProvider extends ContentProvider {
 		} else {
 			newWhereStatement = whereStatement + " AND ";
 		}
-		return newWhereStatement + " " + AcronymContract.AcronymEntry._ID + " = " + id;
+		return newWhereStatement + " " + AcronymContract.AcronymEntry._ID
+				+ " = " + id;
 	}
 }
