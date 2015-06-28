@@ -123,7 +123,6 @@ public class VideoServController {
 		// client too!
 		// ...
 		response.addHeader("Content-Type", v.getContentType());
-		response.addHeader("Content-Type", v.getContentType());
 		videoDataMgr.copyVideoData(v, response.getOutputStream());
 	}
 
