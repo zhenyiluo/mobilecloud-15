@@ -6,8 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import vandy.mooc.activities.ContactsActivity;
-import vandy.mooc.utils.ConfigurableOps;
-import vandy.mooc.utils.Utils;
+import vandy.mooc.common.ConfigurableOps;
+import vandy.mooc.common.Utils;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -58,16 +58,66 @@ public class ContactsOps implements ConfigurableOps {
      */
     protected final List<String> mContacts =
         new ArrayList<String>(Arrays.asList(new String[] 
-            { "Jimmy Buffet", 
+            { "Jimmy Buffett",
               "Jimmy Carter",
               "Jimmy Choo", 
+              "Jimmy Connors", 
               "Jiminy Cricket", 
+              "Jimmy Durante",
               "Jimmy Fallon",
               "Jimmy Kimmel", 
               "Jimi Hendrix", 
               "Jimmy Johns",
               "Jimmy Johnson",
-              "Jimmy Page", }));
+              "Jimmy Swaggart", 
+            }));
+
+    /**
+     * The list of contacts that we'll modify.
+     */
+    protected final List<String> mModifyContacts =
+        new ArrayList<String>(Arrays.asList(new String[] 
+            { 
+                "Jiminy Cricket", 
+                "James Cricket",
+                "Jimi Hendrix", 
+                "James Hendix",
+                "Jimmy Buffett",
+                "James Buffett",
+                "Jimmy Carter",
+                "James Carter",
+                "Jimmy Choo", 
+                "James Choo", 
+                "Jimmy Connors", 
+                "James Connors", 
+                "Jimmy Durante",
+                "James Durante",
+                "Jimmy Fallon",
+                "James Fallon",
+                "Jimmy Kimmel", 
+                "James Kimmel", 
+                "Jimmy Johns",
+                "James Johns",
+                "Jimmy Johnson",
+                "James Johnson",
+                "Jimmy Page", 
+                "James Page", 
+                "Jimmy Swaggart", 
+                "James Swaggart", 
+            }));
+
+    /**
+     * The types of ContactCommands.
+     */
+    enum ContactsCommandType {
+        INSERT_COMMAND,
+        QUERY_COMMAND,
+        MODIFY_COMMAND,
+        DELETE_COMMAND,
+    }
+
+    ContactsCommand mCommands[] =
+        new ContactsCommand[ContactsCommandType.values().length];
 
     /**
      * This default constructor must be public for the GenericOps
@@ -92,45 +142,64 @@ public class ContactsOps implements ConfigurableOps {
         mActivity = 
             new WeakReference<>((ContactsActivity) activity);
 
-        if (firstTimeIn)
+        if (firstTimeIn) {
             // Initialize the Google account information.
             initializeAccount();
-        else if (mCursor != null)
+
+            initializeCommands();
+        } else if (mCursor != null)
             // Redisplay the contents of the cursor after a runtime
             // configuration change.
             mActivity.get().displayCursor(mCursor);
+    }
+
+    private void initializeCommands() {
+        // Create a command that executes a GenericAsyncTask to
+        // perform the insertions off the UI Thread.
+        mCommands[ContactsCommandType.INSERT_COMMAND.ordinal()] =
+            new InsertContactsCommand(this);
+
+        // Create a command that executes a GenericAsyncTask to
+        // perform the queries off the UI Thread.
+        mCommands[ContactsCommandType.QUERY_COMMAND.ordinal()] =
+            new QueryContactsCommand(this);
+
+        // Create a command that executes a GenericAsyncTask to
+        // perform the modifications off the UI Thread.
+        mCommands[ContactsCommandType.MODIFY_COMMAND.ordinal()] =
+            new ModifyContactsCommand(this);
+
+        // Create a command that executes a GenericAsyncTask to
+        // perform the deletions off the UI Thread.
+        mCommands[ContactsCommandType.DELETE_COMMAND.ordinal()] =
+            new DeleteContactsCommand(this);
     }
 
     /**
      * Insert the contacts.
      */
     public void runInsertContactCommand() {
-        // Reset mCursor and reset the display to show nothing.
-        mActivity.get().displayCursor(mCursor = null);
-
-        // Create a command that executes a GenericAsyncTask to
-        // perform the insertions off the UI Thread.
-        new InsertContactsCommand(this, 
-                                  mContacts.iterator()).run();
+        // Execute the InsertContactsCommand.
+        mCommands[ContactsCommandType.INSERT_COMMAND.ordinal()].execute
+            (mContacts.iterator());
     }
 
     /**
-     * Query the contacts.
+     * Modify the contacts.
      */
-    public void runQueryContactsCommand() {
-        // Create a command that executes a GenericAsyncTask to
-        // perform the Query off the UI Thread.
-        new QueryContactsCommand(this).run();
+    public void runModifyContactCommand() {
+        // Execute the InsertModifyCommand.
+        mCommands[ContactsCommandType.MODIFY_COMMAND.ordinal()].execute
+            (mModifyContacts.iterator());
     }
 
     /**
      * Delete the contacts.
      */
     public void runDeleteContactCommand() {
-        // Create a command that executes a GenericAsyncTask to
-        // perform the deletions off the UI Thread.
-        new DeleteContactsCommand(this,
-                                  mContacts.iterator()).run();
+        // Execute the InsertDeleteCommand.
+        mCommands[ContactsCommandType.DELETE_COMMAND.ordinal()].execute
+            (mModifyContacts.iterator());
     }
 
     /**

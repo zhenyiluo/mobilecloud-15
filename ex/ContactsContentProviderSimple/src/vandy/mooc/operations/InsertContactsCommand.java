@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import vandy.mooc.utils.GenericAsyncTask;
-import vandy.mooc.utils.GenericAsyncTaskOps;
-import vandy.mooc.utils.Utils;
+import vandy.mooc.common.GenericAsyncTask;
+import vandy.mooc.common.GenericAsyncTaskOps;
+import vandy.mooc.common.Utils;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
-import android.content.Context;
+import android.content.ContentResolver;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
@@ -19,63 +19,58 @@ import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
 
 /**
- * Insert all designated contacts in a background thread.
+ * Insert all designated contacts in a background task.
  */
 public class InsertContactsCommand
-       implements GenericAsyncTaskOps<Iterator<String>, Void, Integer> {
+       extends GenericAsyncTaskOps<Iterator<String>, Void, Integer>
+       implements ContactsCommand {
     /**
      * Store a reference to the ContactsOps object.
      */
     private ContactsOps mOps;
 
     /**
-     * Iterator containing contacts to delete.
+     * Store a reference to the Application context's ContentResolver.
      */
-    private Iterator<String> mContactsIter;
-    
-    /**
-     * Store a reference to the Application context. 
-     */
-    private Context mApplicationContext;
-
-    /**
-     * The GenericAsyncTask used to insert contacts into the
-     * ContactContentProvider.
-     */
-    private GenericAsyncTask<Iterator<String>, Void, Integer, InsertContactsCommand> mAsyncTask;
+    private ContentResolver mContentResolver;
 
     /**
      * Constructor initializes the field.
      */
-    public InsertContactsCommand(ContactsOps ops,
-                                 Iterator<String> contactsIter) {
-        // Store the ContactOps, Iterator, and Application context.
+    public InsertContactsCommand(ContactsOps ops) {
+        // Store the ContactOps and the ContentResolver from the
+        // Application context.
         mOps = ops;
-        mContactsIter = contactsIter;
-        mApplicationContext =
-            ops.getActivity().getApplicationContext();
-
-        // Create a GenericAsyncTask to insert the contacts off the UI
-        // Thread.
-        mAsyncTask = new GenericAsyncTask<>(this);
+        mContentResolver =
+            ops.getActivity().getApplicationContext().getContentResolver();
     }
 
     /**
      * Run the command.
      */
     @SuppressWarnings("unchecked")
-    public void run() {
+    @Override
+    public void execute(Iterator<String> contactsIter) {
+        // Create a GenericAsyncTask to insert the contacts off the UI
+        // Thread.
+        final GenericAsyncTask<Iterator<String>,
+                               Void,
+                               Integer,
+                               InsertContactsCommand> asyncTask =
+            new GenericAsyncTask<>(this);
+
         // Execute the GenericAsyncTask.
-        mAsyncTask.execute(mContactsIter);
+        asyncTask.execute(contactsIter);
     }
 
     /** 
      * Run in a background Thread to avoid blocking the UI Thread.
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public Integer doInBackground(Iterator<String> contactsIter) {
+    public Integer doInBackground(Iterator<String>... contactsIter) {
         // Insert all the contacts designated by the Iterator.
-        return insertAllContacts(contactsIter);
+        return insertAllContacts(contactsIter[0]);
     }
 
     /**
@@ -83,8 +78,7 @@ public class InsertContactsCommand
      * the UI Thread.
      */
     @Override
-    public void onPostExecute(Integer count,
-                              Iterator<String> contactsIter) {
+    public void onPostExecute(Integer count) {
         Utils.showToast(mOps.getActivity(),
                         count
                         + " contact(s) inserted");
@@ -107,10 +101,8 @@ public class InsertContactsCommand
         try {
             // Apply all the batched operations synchronously.
             ContentProviderResult[] results =
-                mApplicationContext
-                .getContentResolver()
-                .applyBatch(ContactsContract.AUTHORITY,
-                            batchOperation);
+                mContentResolver.applyBatch(ContactsContract.AUTHORITY,
+                                            batchOperation);
             // Divide by 2 since each insert required two operations.
             return results.length / 2; 
         } catch (RemoteException e) {

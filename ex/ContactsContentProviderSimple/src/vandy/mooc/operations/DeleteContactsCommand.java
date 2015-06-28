@@ -2,70 +2,65 @@ package vandy.mooc.operations;
 
 import java.util.Iterator;
 
-import vandy.mooc.utils.GenericAsyncTask;
-import vandy.mooc.utils.GenericAsyncTaskOps;
-import vandy.mooc.utils.Utils;
-import android.content.Context;
+import vandy.mooc.common.GenericAsyncTask;
+import vandy.mooc.common.GenericAsyncTaskOps;
+import vandy.mooc.common.Utils;
+import android.content.ContentResolver;
 import android.provider.ContactsContract;
 
 /**
- * Delete all designated contacts in a background thread.
+ * Delete all designated contacts in a background task.
  */
 public class DeleteContactsCommand
-       implements GenericAsyncTaskOps<Iterator<String>, Void, Integer> {
+       extends GenericAsyncTaskOps<Iterator<String>, Void, Integer>
+       implements ContactsCommand {
     /**
      * Store a reference to the ContactsOps object.
      */
     private ContactsOps mOps;
 
     /**
-     * Store a reference to the Application context. 
+     * Store a reference to the Application context's ContentResolver.
      */
-    private Context mApplicationContext;
-
-    /**
-     * Iterator containing contacts to delete.
-     */
-    private Iterator<String> mContactsIter;
-
-    /**
-     * The GenericAsyncTask used to insert contacts into the
-     * ContactContentProvider.
-     */
-    private GenericAsyncTask<Iterator<String>, Void, Integer, DeleteContactsCommand> mAsyncTask;
+    private ContentResolver mContentResolver;
 
     /**
      * Constructor initializes the fields.
      */
-    public DeleteContactsCommand(ContactsOps ops,
-                                 Iterator<String> contactsIter) {
-        // Store the ContactOps, Iterator, and Application context.
+    public DeleteContactsCommand(ContactsOps ops) {
+        // Store the ContactOps and the ContentResolver from the
+        // Application context.
         mOps = ops;
-        mContactsIter = contactsIter;
-        mApplicationContext =
-            ops.getActivity().getApplicationContext();
-
-        // Create a GenericAsyncTask to delete the contacts off the UI
-        // Thread.
-        mAsyncTask = new GenericAsyncTask<>(this);
+        mContentResolver =
+            ops.getActivity().getApplicationContext().getContentResolver();
     }
 
     /**
      * Run the command.
      */
     @SuppressWarnings("unchecked")
-    public void run() {
+    @Override
+    public void execute (Iterator<String> contactsIter) {
+        // Create a GenericAsyncTask to delete the contacts off the UI
+        // Thread.
+        final GenericAsyncTask<Iterator<String>,
+                               Void,
+                               Integer,
+                               DeleteContactsCommand> asyncTask =
+            new GenericAsyncTask<>(this);
+
         // Execute the GenericAsyncTask.
-        mAsyncTask.execute(mContactsIter);
+        asyncTask.execute(contactsIter);
     }
 
     /**
      * Run in a background Thread to avoid blocking the UI Thread.
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public Integer doInBackground(Iterator<String> contactsIter) {
+    public Integer doInBackground(Iterator<String>... contactsIter) {
         // Delete all the contacts named by the iterator.
-        return deleteAllContacts(contactsIter);
+        return deleteAllContacts(contactsIter[0]);
     }
 
     /**
@@ -73,8 +68,7 @@ public class DeleteContactsCommand
      * many contacts were deleted.
      */
     @Override
-    public void onPostExecute(Integer totalContactsDeleted,
-                              Iterator<String> contactsIter) {
+    public void onPostExecute(Integer totalContactsDeleted) {
         Utils.showToast(mOps.getActivity(),
                         totalContactsDeleted 
                         + " contact(s) deleted");
@@ -98,11 +92,9 @@ public class DeleteContactsCommand
      * Delete the contact with the designated @a name.
      */
     private int deleteContact(String name) {
-        return mApplicationContext
-            .getContentResolver()
-            .delete(ContactsContract.RawContacts.CONTENT_URI,
-                    ContactsContract.Contacts.DISPLAY_NAME
-                    + "=?",
-                    new String[] { name });
+        return mContentResolver.delete(ContactsContract.RawContacts.CONTENT_URI,
+                                       ContactsContract.Contacts.DISPLAY_NAME
+                                       + "=?",
+                                       new String[] { name });
     }
 }

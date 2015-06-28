@@ -1,68 +1,79 @@
 package vandy.mooc.operations;
 
-import vandy.mooc.utils.GenericAsyncTask;
-import vandy.mooc.utils.GenericAsyncTaskOps;
-import vandy.mooc.utils.Utils;
+import java.util.Iterator;
+
+import vandy.mooc.common.GenericAsyncTask;
+import vandy.mooc.common.GenericAsyncTaskOps;
+import vandy.mooc.common.Utils;
 import android.content.ContentResolver;
-import android.content.Context;
+import android.database.ContentObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 
+/**
+ * Query all the star'd contacts in a background task.
+ */
 public class QueryContactsCommand
-       implements GenericAsyncTaskOps<Void, Void, Cursor> {
-    /**
-     * Columns to query.
-     */
-    private final String sColumnsToQuery[] =
-        new String[] {
-        ContactsContract.Contacts._ID,
-        ContactsContract.Contacts.DISPLAY_NAME,
-        ContactsContract.Contacts.STARRED 
-    };
-	
-    /**
-     * Contacts to select.
-     */
-    private final String sSelect = 
-        "((" + Contacts.DISPLAY_NAME + " NOTNULL) AND ("
-        + Contacts.DISPLAY_NAME + " != '' ) AND (" + Contacts.STARRED
-        + "== 1))";
-
+       extends GenericAsyncTaskOps<Void, Void, Cursor> 
+       implements ContactsCommand {
     /**
      * Store a reference to the ContactsOps object.
      */
     private ContactsOps mOps;
 
     /**
-     * Store a reference to the Application context. 
+     * Store a reference to the Application context's ContentResolver.
      */
-    private Context mApplicationContext;
+    private ContentResolver mContentResolver;
 
     /**
-     * The GenericAsyncTask used to query contacts into the
-     * ContactContentProvider.
+     * Observer that's dispatched by the ContentResolver when Contacts
+     * change (e.g., are inserted or deleted).
      */
-    private GenericAsyncTask<Void, Void, Cursor, QueryContactsCommand> mAsyncTask;
+    private final ContentObserver contactsChangeContentObserver =
+        new ContentObserver(null) {
+            /**
+             * Trigger a query and display.
+             */
+            @Override
+            public void onChange (boolean selfChange) {
+                execute(null);
+            }
+        };
 
     /**
      * Constructor initializes the fields.
      */
     public QueryContactsCommand(ContactsOps ops) {
-        // Store the ContactOps and Application context.
+        // Store the ContactOps and the ContentResolver from the
+        // Application context.
         mOps = ops;
-        mApplicationContext =
-            ops.getActivity().getApplicationContext();
+        mContentResolver =
+            ops.getActivity().getApplicationContext().getContentResolver();
 
-        // Create a GenericAsyncTask to query the contacts off the UI
-        // Thread.
-        mAsyncTask = new GenericAsyncTask<>(this);
+        // Register a ContentObserver that's notified when Contacts
+        // change (e.g., are inserted or deleted).
+        mContentResolver.registerContentObserver
+            (ContactsContract.Contacts.CONTENT_URI,
+             true,
+             contactsChangeContentObserver);
     }
 
     /**
      * Run the command.
      */
-    public void run() {
+    @Override
+    public void execute(Iterator<String> ignore) {
+        // Create a GenericAsyncTask to query the contacts off the UI
+        // Thread.
+        final GenericAsyncTask<Void,
+                               Void,
+                               Cursor,
+                               QueryContactsCommand> mAsyncTask = 
+            new GenericAsyncTask<>(this);
+
         // Execute the GenericAsyncTask.
         mAsyncTask.execute((Void) null);
     }
@@ -71,23 +82,22 @@ public class QueryContactsCommand
      * Run in a background Thread to avoid blocking the UI Thread.
      */
     @Override
-    public Cursor doInBackground(Void v) {
+    public Cursor doInBackground(Void... v) {
         // Query the Contacts ContentProvider for the contacts and
         // return them.
-        return queryAllContacts
-            (mApplicationContext.getContentResolver());
+        return queryAllContacts(mContentResolver);
     }
 
     /**
      * The results of the query are displayed in the UI Thread.
      */
     @Override
-    public void onPostExecute(Cursor cursor,
-                              Void v) {
+    public void onPostExecute(Cursor cursor) {
         if (cursor == null
             || cursor.getCount() == 0)
-            Utils.showToast(mOps.getActivity(),
-                            "Contacts not found");
+            // Utils.showToast(mOps.getActivity(),
+            // "Contacts not found")
+            ;
         else {
             mOps.setCursor(cursor);
             mOps.getActivity().displayCursor(cursor);
@@ -99,11 +109,29 @@ public class QueryContactsCommand
      * ContentProvider.
      */
     public Cursor queryAllContacts(ContentResolver cr) {
+        // Columns to query.
+        final String columnsToQuery[] =
+            new String[] {
+            ContactsContract.Contacts._ID,
+            ContactsContract.Contacts.DISPLAY_NAME,
+            ContactsContract.Contacts.STARRED 
+        };
+	
+        // Contacts to select.
+        final String selection = 
+            "((" 
+            + Contacts.DISPLAY_NAME 
+            + " NOTNULL) AND ("
+            + Contacts.DISPLAY_NAME 
+            + " != '' ) AND (" 
+            + Contacts.STARRED
+            + "== 1))";
+
         // Perform a synchronous (blocking) query on the
         // ContactsContentProvider.
-        return cr.query(ContactsContract.Contacts.CONTENT_URI, 
-                        sColumnsToQuery, 
-                        sSelect,
+        return cr.query(ContactsContract.RawContacts.CONTENT_URI, 
+                        columnsToQuery, 
+                        selection,
                         null, 
                         ContactsContract.Contacts._ID
                         + " ASC");
