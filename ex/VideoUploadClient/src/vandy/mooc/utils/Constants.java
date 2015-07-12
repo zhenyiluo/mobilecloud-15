@@ -10,7 +10,7 @@ public class Constants {
      * README.md to set up the SERVER_URL.
      */
     public static final String SERVER_URL =
-        "http://XXX.XXX.XXX.XXX:8080";
+    		"http://10.0.2.2:8080";
     
     /**
      * Define a constant for 1 MB.
