@@ -8,5 +8,7 @@
     <string name="title_upload_video">Upload Video by </string>
     <string name="play">Play Selected Video</string>
     <string name="download">Download Selected Video</string>
+    <string name="title_video_play_activity">Video Play Activity</string>
+    
 
 </resources>
