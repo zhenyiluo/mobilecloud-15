@@ -94,5 +94,6 @@ public interface VideoServiceProxy {
      */
     @Streaming
     @GET(VIDEO_DATA_PATH)
+    // TODO this can be used for assignment3
     Response getData(@Path(ID_PARAMETER) long id);
 }

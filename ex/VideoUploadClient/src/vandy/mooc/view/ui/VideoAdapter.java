@@ -126,6 +126,7 @@ public class VideoAdapter
     /**
      * Get Id of video from a given position.
      */
+    @Override
     public long getItemId(int position) {
         return position;
     }

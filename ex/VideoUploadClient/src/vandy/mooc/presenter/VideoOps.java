@@ -87,6 +87,7 @@ public class VideoOps
      * Called after a runtime configuration change occurs to finish
      * the initialisation steps.
      */
+    @Override
     public void onConfiguration(VideoOps.View view,
                                 boolean firstTimeIn) {
         final String time =
@@ -134,6 +135,12 @@ public class VideoOps
             (UploadVideoService.makeIntent 
                  (mVideoView.get().getApplicationContext(),
                   videoUri));
+    }
+    
+    public void downloadVideo(Uri videoUri){
+    	// Sends an Intent command to the DownloadVideoService.
+    	// TODO
+//    	mVideoView.get().getActivityContext().startService();
     }
 
     /**

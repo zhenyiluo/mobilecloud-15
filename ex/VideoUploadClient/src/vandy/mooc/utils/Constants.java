@@ -10,7 +10,7 @@ public class Constants {
      * README.md to set up the SERVER_URL.
      */
     public static final String SERVER_URL =
-        "http://XXX.XXX.XXX.XXX:8080";
+        "http://10.0.2.2:8080";
     
     /**
      * Define a constant for 1 MB.
@@ -21,4 +21,6 @@ public class Constants {
      * Maximum size of Video to be uploaded in MB.
      */
     public static final long MAX_SIZE_MEGA_BYTE = 50 * MEGA_BYTE;
+    
+    public static final String DATA_URL = "dataUrl";
 }

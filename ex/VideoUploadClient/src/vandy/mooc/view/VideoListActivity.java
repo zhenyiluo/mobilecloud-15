@@ -3,12 +3,17 @@ package vandy.mooc.view;
 import vandy.mooc.R;
 import vandy.mooc.common.GenericActivity;
 import vandy.mooc.common.Utils;
+import vandy.mooc.model.mediator.webdata.Video;
 import vandy.mooc.model.services.UploadVideoService;
 import vandy.mooc.presenter.VideoOps;
+import vandy.mooc.utils.Constants;
 import vandy.mooc.utils.VideoStorageUtils;
 import vandy.mooc.view.ui.FloatingActionButton;
 import vandy.mooc.view.ui.UploadVideoDialogFragment;
 import vandy.mooc.view.ui.VideoAdapter;
+
+import java.io.File;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,12 +21,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 /**
@@ -95,6 +103,31 @@ public class VideoListActivity
         // entered.
         mVideosList =
             (ListView) findViewById(R.id.videoList);
+        
+        mVideosList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// TODO Auto-generated method stub
+				System.out.println("OK");
+				VideoAdapter videoAdapter = (VideoAdapter) parent.getAdapter();
+				Video video = videoAdapter.getVideos().get(position);
+				System.out.println(video.getTitle());
+				
+//				String dataUrl = video.getDataUrl();
+				String title = video.getTitle();
+				
+				File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+				System.out.println(file.getAbsolutePath());
+				String dataUrl = file.getAbsolutePath() + "/" + title;
+				
+				Intent intent = new Intent(VideoListActivity.this, VideoPlayActivity.class);
+				intent.putExtra(Constants.DATA_URL, dataUrl);
+				
+				startActivity(intent);
+				
+			}
+		});
 
         // Get reference to the Floating Action Button.
         mUploadVideoButton =
