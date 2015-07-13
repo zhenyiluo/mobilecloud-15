@@ -27,4 +27,10 @@ public class Constants {
     public static final String FILE_EXISTS = "fileExists";
     
     public static final String VIDEO_ID = "videoId";
+    
+    public static final String PREFIX = "prefix";
+    
+    public static final String SUFFIX = "suffix";
+    
+    public static final String BUNDLE = "bundle";
 }

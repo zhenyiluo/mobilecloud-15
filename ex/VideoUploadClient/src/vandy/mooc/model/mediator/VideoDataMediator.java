@@ -1,10 +1,13 @@
 package vandy.mooc.model.mediator;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 import retrofit.RestAdapter;
 import retrofit.client.Response;
@@ -17,6 +20,7 @@ import vandy.mooc.utils.Constants;
 import vandy.mooc.utils.VideoMediaStoreUtils;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 
 /**
  * Mediates communication between the Video Service and the local
@@ -31,6 +35,9 @@ public class VideoDataMediator {
      */
     public static final String STATUS_UPLOAD_SUCCESSFUL =
         "Upload succeeded";
+    
+    public static final String STATUS_DOWNLOAD_SUCCESSFUL =
+            "Download succeeded";
     
     /**
      * Status code to indicate that file upload failed 
@@ -64,11 +71,17 @@ public class VideoDataMediator {
             .create(VideoServiceProxy.class);
     }
     
-    public String downloadVideo(Context applicationContext, long id) throws IOException {
-		// TODO Auto-generated method stub
+    public String downloadVideo(Context applicationContext, Bundle bundle) throws IOException {
+    	final long id = bundle.getLong(Constants.VIDEO_ID);
+    	final String prefix = bundle.getString(Constants.PREFIX);
+    	final String suffix = bundle.getString(Constants.SUFFIX); 
+    	
     	Response response = mVideoServiceProxy.getData(id);
-    	InputStream videoData = response.getBody().in();
-		return null;
+    	InputStream in = response.getBody().in();
+    	final File tmpFile = File.createTempFile(prefix, suffix);
+    	FileOutputStream out = new FileOutputStream(tmpFile);
+    	IOUtils.copy(in, out);
+    	return STATUS_DOWNLOAD_SUCCESSFUL;
 	}
 
     /**

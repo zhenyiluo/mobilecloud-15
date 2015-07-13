@@ -3,12 +3,14 @@ package vandy.mooc.model.services;
 import java.io.IOException;
 
 import vandy.mooc.model.mediator.VideoDataMediator;
+import vandy.mooc.model.mediator.webdata.VideoStatus.VideoState;
 import vandy.mooc.utils.Constants;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -74,10 +76,10 @@ public class DownloadVideoService
      * @return
      */
     public static Intent makeIntent(Context context,
-                                    long id) {
+                                    Bundle data) {
         return new Intent(context, 
                           DownloadVideoService.class)
-                   .putExtra(Constants.VIDEO_ID, id);
+                   .putExtra(Constants.BUNDLE, data);
     }
     
     /**
@@ -102,7 +104,7 @@ public class DownloadVideoService
         // Check if Video Download is successful.
         try {
 			finishNotification(mVideoMediator.downloadVideo(getApplicationContext(),
-			                                           intent.getExtras().getLong(Constants.VIDEO_ID)));
+			                                           intent.getExtras().getBundle(Constants.BUNDLE)));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

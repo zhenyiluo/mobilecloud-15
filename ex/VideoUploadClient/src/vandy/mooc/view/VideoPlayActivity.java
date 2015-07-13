@@ -4,6 +4,7 @@ import vandy.mooc.R;
 import vandy.mooc.common.GenericActivity;
 import vandy.mooc.presenter.VideoOps;
 import vandy.mooc.utils.Constants;
+import vandy.mooc.view.ui.VideoAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,11 +13,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps> {
+public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps> 
+						implements VideoOps.View{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
+		
 		
 		
 		
@@ -34,8 +36,13 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps> 
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Long id = bundle.getLong(Constants.VIDEO_ID);
-				
-				getOps().downloadVideo(id);
+				String prefix = bundle.getString(Constants.PREFIX);
+				String suffix = bundle.getString(Constants.SUFFIX);
+				Bundle data = new Bundle();
+				data.putLong(Constants.VIDEO_ID, id);
+				data.putString(Constants.PREFIX, prefix);
+				data.putString(Constants.SUFFIX, suffix);
+				getOps().downloadVideo(data);
 			}
 		});
 		
@@ -61,5 +68,18 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps> 
 		}else{
 			playButton.setEnabled(false);
 		}
+		
+		// Invoke the special onCreate() method in GenericActivity,
+        // passing in the VideoOps class to instantiate/manage and
+        // "this" to provide VideoOps with the VideoOps.View instance.
+        super.onCreate(savedInstanceState,
+                       VideoOps.class,
+                       this);
+	}
+
+	@Override
+	public void setAdapter(VideoAdapter videoAdapter) {
+		// TODO Auto-generated method stub
+		// Do nothing.
 	}
 }

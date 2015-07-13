@@ -14,6 +14,7 @@ import vandy.mooc.model.services.DownloadVideoService;
 import vandy.mooc.model.services.UploadVideoService;
 import vandy.mooc.view.ui.VideoAdapter;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 /**
@@ -138,12 +139,12 @@ public class VideoOps
                   videoUri));
     }
     
-    public void downloadVideo(long id){
+    public void downloadVideo(Bundle data){
     	// Sends an Intent command to the DownloadVideoService.
     	mVideoView.get().getActivityContext().startService(
     			DownloadVideoService.makeIntent
     			 (mVideoView.get().getApplicationContext(),
-    	                  id));
+    	                  data));
     }
 
     /**
