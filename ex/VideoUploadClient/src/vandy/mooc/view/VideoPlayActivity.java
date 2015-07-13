@@ -36,12 +36,10 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Long id = bundle.getLong(Constants.VIDEO_ID);
-				String prefix = bundle.getString(Constants.PREFIX);
-				String suffix = bundle.getString(Constants.SUFFIX);
+				String dataUrl = bundle.getString(Constants.DATA_URL);
 				Bundle data = new Bundle();
 				data.putLong(Constants.VIDEO_ID, id);
-				data.putString(Constants.PREFIX, prefix);
-				data.putString(Constants.SUFFIX, suffix);
+				data.putString(Constants.DATA_URL, dataUrl);
 				getOps().downloadVideo(data);
 			}
 		});

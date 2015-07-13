@@ -119,9 +119,6 @@ public class VideoListActivity
 				File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 				String dataUrl = file.getAbsolutePath() + "/" + title;
 				
-				String[] prefix_suffix = title.split("\\.");
-				String prefix = prefix_suffix[0];
-				String suffix = "." + prefix_suffix[1];
 				
 				File fileVideo = new File(dataUrl); 
 				
@@ -129,8 +126,6 @@ public class VideoListActivity
 				intent.putExtra(Constants.DATA_URL, dataUrl);
 				intent.putExtra(Constants.FILE_EXISTS, fileVideo.exists());
 				intent.putExtra(Constants.VIDEO_ID, video.getId());
-				intent.putExtra(Constants.PREFIX, prefix);
-				intent.putExtra(Constants.SUFFIX, suffix);
 				
 				startActivity(intent);
 				

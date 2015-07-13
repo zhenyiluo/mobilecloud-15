@@ -73,14 +73,14 @@ public class VideoDataMediator {
     
     public String downloadVideo(Context applicationContext, Bundle bundle) throws IOException {
     	final long id = bundle.getLong(Constants.VIDEO_ID);
-    	final String prefix = bundle.getString(Constants.PREFIX);
-    	final String suffix = bundle.getString(Constants.SUFFIX); 
-    	
+    	final String dataUrl = bundle.getString(Constants.DATA_URL);
     	Response response = mVideoServiceProxy.getData(id);
     	InputStream in = response.getBody().in();
-    	final File tmpFile = File.createTempFile(prefix, suffix);
-    	FileOutputStream out = new FileOutputStream(tmpFile);
+    	final File file = new File(dataUrl);
+    	FileOutputStream out = new FileOutputStream(file);
     	IOUtils.copy(in, out);
+    	in.close();
+    	out.close();
     	return STATUS_DOWNLOAD_SUCCESSFUL;
 	}
 
