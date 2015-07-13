@@ -59,6 +59,12 @@ public class VideoListActivity
      * Gallery.
      */
     private final int REQUEST_GET_VIDEO = 1;
+    
+    /**
+     * Key for saving RecordedVideoUri
+     */
+    private static final String KEY_RECORD_VIDEO_URI =
+                          "recordedVideoUri";
 
     /**
      * The Broadcast Receiver that registers itself to receive the
@@ -78,11 +84,7 @@ public class VideoListActivity
      */
     private ListView mVideosList;
 
-    /**
-     * Uri to store the Recorded Video.
-     */
-    private Uri mRecordVideoUri;
-    
+  
     /**
      * Hook method called when a new instance of Activity is created.
      * One time initialization code goes here, e.g., storing Views.
@@ -244,9 +246,14 @@ public class VideoListActivity
             
         case RECORD_VIDEO:
             // Create a file to save the video.
-            mRecordVideoUri =
-                VideoStorageUtils.getRecordedVideoUri
+            Uri mRecordVideoUri =
+                   VideoStorageUtils.getRecordedVideoUri
                                    (getApplicationContext());  
+            
+            // Save the RecordedVideoUri in the
+            // RetainedFragmentManager.
+            getRetainedFragmentManager().put(KEY_RECORD_VIDEO_URI,
+                                             mRecordVideoUri);
             
             // Create an intent that will start an Activity to get
             // Record Video.
@@ -288,8 +295,10 @@ public class VideoListActivity
                 
             // Video is recorded.
             else if (requestCode == REQUEST_VIDEO_CAPTURE)
-                videoUri = mRecordVideoUri;
-              
+                // Get the RecordedVideoUri from the RetainedFragment.
+                videoUri = 
+                    getRetainedFragmentManager().get(KEY_RECORD_VIDEO_URI);
+            
             if (videoUri != null){
                 Utils.showToast(this,
                                 "Uploading video"); 
