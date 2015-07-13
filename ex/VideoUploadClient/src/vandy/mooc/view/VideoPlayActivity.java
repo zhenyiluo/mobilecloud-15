@@ -12,15 +12,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps> 
 						implements VideoOps.View{
 
+	private RatingBar ratingBar;
+	private TextView txtAvgRatingValue;
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
-		
-		
-		
 		
 		setContentView(R.layout.video_play_activity);
 		
@@ -56,7 +59,6 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 				Intent intent = new Intent(Intent.ACTION_VIEW);
 				String type = "video/*";
 				intent.setDataAndType(Uri.parse(dataUrl), type);
-				
 				startActivity(intent);
 			}
 		});
@@ -66,6 +68,37 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 		}else{
 			playButton.setEnabled(false);
 		}
+		
+		txtAvgRatingValue = (TextView) findViewById(R.id.txtAvgRatingValue);
+		ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+		
+		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
+			public void onRatingChanged(RatingBar ratingBar, float rating,
+				boolean fromUser) {
+	 
+				// TODO
+				txtAvgRatingValue.setText(String.valueOf(rating));
+			}
+		});
+		
+		
+		
+		
+		Button btnSubmit = (Button) findViewById(R.id.btnSubmit);
+		 
+		//if click on me, then display the current rating value.
+		btnSubmit.setOnClickListener(new OnClickListener() {
+	 
+			@Override
+			public void onClick(View v) {
+	 
+				Toast.makeText(VideoPlayActivity.this,
+					String.valueOf(ratingBar.getRating()),
+						Toast.LENGTH_SHORT).show();
+	 
+			}
+	 
+		});
 		
 		// Invoke the special onCreate() method in GenericActivity,
         // passing in the VideoOps class to instantiate/manage and

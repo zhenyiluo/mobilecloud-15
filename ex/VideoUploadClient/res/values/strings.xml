@@ -9,6 +9,9 @@
     <string name="play">Play Selected Video</string>
     <string name="download">Download Selected Video</string>
     <string name="title_video_play_activity">Video Play Activity</string>
-    
+    <string name="submit">Submit</string>
+    <string name="result">Result : </string>
+    <string name="avgResult">Average Result : </string>
+    <string name="rateMe">Rate Me</string>
 
 </resources>

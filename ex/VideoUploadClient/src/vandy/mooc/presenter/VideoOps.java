@@ -13,6 +13,7 @@ import vandy.mooc.model.mediator.webdata.Video;
 import vandy.mooc.model.services.DownloadVideoService;
 import vandy.mooc.model.services.UploadVideoService;
 import vandy.mooc.view.ui.VideoAdapter;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -194,4 +195,5 @@ public class VideoOps
             mVideoView.get().finish();
         }
     }
+
 }
