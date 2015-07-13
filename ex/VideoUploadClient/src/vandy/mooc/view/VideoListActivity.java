@@ -109,20 +109,20 @@ public class VideoListActivity
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				// TODO Auto-generated method stub
-				System.out.println("OK");
 				VideoAdapter videoAdapter = (VideoAdapter) parent.getAdapter();
 				Video video = videoAdapter.getVideos().get(position);
-				System.out.println(video.getTitle());
 				
-//				String dataUrl = video.getDataUrl();
 				String title = video.getTitle();
 				
 				File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-				System.out.println(file.getAbsolutePath());
 				String dataUrl = file.getAbsolutePath() + "/" + title;
+				
+				File fileVideo = new File(dataUrl); 
 				
 				Intent intent = new Intent(VideoListActivity.this, VideoPlayActivity.class);
 				intent.putExtra(Constants.DATA_URL, dataUrl);
+				intent.putExtra(Constants.FILE_EXISTS, fileVideo.exists());
+				intent.putExtra(Constants.VIDEO_ID, video.getId());
 				
 				startActivity(intent);
 				

@@ -1,6 +1,9 @@
 package vandy.mooc.model.services;
 
+import java.io.IOException;
+
 import vandy.mooc.model.mediator.VideoDataMediator;
+import vandy.mooc.utils.Constants;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -11,9 +14,9 @@ import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.LocalBroadcastManager;
 
 /**
- * Intent Service that runs in background and uploads the Video with a
+ * Intent Service that runs in background and downloads the Video with a
  * given Id.  After the operation, it broadcasts the Intent to send
- * the result of the upload to the VideoListActivity.
+ * the result of the download to the VideoPlayActivity.
  */
 public class DownloadVideoService 
        extends IntentService {
@@ -21,8 +24,8 @@ public class DownloadVideoService
      * Custom Action that will be used to send Broadcast to the
      * VideoListActivity.
      */
-    public static final String ACTION_UPLOAD_SERVICE_RESPONSE =
-                "vandy.mooc.services.UploadVideoService.RESPONSE";
+    public static final String ACTION_DOWNLOAD_SERVICE_RESPONSE =
+                "vandy.mooc.services.DownloadVideoService.RESPONSE";
     
     /**
      * It is used by Notification Manager to send Notifications.
@@ -46,21 +49,20 @@ public class DownloadVideoService
     private Builder mBuilder;
     
     /**
-     * Constructor for UploadVideoService.
+     * Constructor for DownloadVideoService.
      * 
      * @param name
      */
     public DownloadVideoService(String name) {
-        super("UploadVideoService");     
+        super("DownloadVideoService");     
     }
     
     /**
-     * Constructor for UploadVideoService.
+     * Constructor for DownloadVideoService.
      * 
-     * @param name
      */
     public DownloadVideoService() {
-        super("UploadVideoService");     
+        super("DownloadVideoService");     
     }
     
     /**
@@ -72,10 +74,10 @@ public class DownloadVideoService
      * @return
      */
     public static Intent makeIntent(Context context,
-                                    Uri videoUri) {
+                                    long id) {
         return new Intent(context, 
                           DownloadVideoService.class)
-                   .setData(videoUri);
+                   .putExtra(Constants.VIDEO_ID, id);
     }
     
     /**
@@ -97,29 +99,34 @@ public class DownloadVideoService
         mVideoMediator =
             new VideoDataMediator(); 
 
-        // Check if Video Upload is successful.
-        finishNotification(mVideoMediator.uploadVideo(getApplicationContext(),
-                                                   intent.getData()));
+        // Check if Video Download is successful.
+        try {
+			finishNotification(mVideoMediator.downloadVideo(getApplicationContext(),
+			                                           intent.getExtras().getLong(Constants.VIDEO_ID)));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
              
         // Send the Broadcast to VideoListActivity that the Video
-        // Upload is completed.
+        // Download is completed.
         sendBroadcast();
     }
     
     /**
-     * Send the Broadcast to Activity that the Video Upload is
+     * Send the Broadcast to Activity that the Video Download is
      * completed.
      */
     private void sendBroadcast(){
         // Use a LocalBroadcastManager to restrict the scope of this
         // Intent to the VideoUploadClient application.
         LocalBroadcastManager.getInstance(this)
-             .sendBroadcast(new Intent(ACTION_UPLOAD_SERVICE_RESPONSE)
+             .sendBroadcast(new Intent(ACTION_DOWNLOAD_SERVICE_RESPONSE)
                             .addCategory(Intent.CATEGORY_DEFAULT));
     }
     
     /**
-     * Finish the Notification after the Video is Uploaded.
+     * Finish the Notification after the Video is Downloaded.
      * 
      * @param status
      */
@@ -130,7 +137,7 @@ public class DownloadVideoService
                 .setProgress (0,
                               0,
                               false)
-                .setSmallIcon(android.R.drawable.stat_sys_upload_done)
+                .setSmallIcon(android.R.drawable.stat_sys_download_done)
                 .setContentText("") 
                 .setTicker(status);
 
@@ -141,7 +148,7 @@ public class DownloadVideoService
     }
     
     /**
-     * Starts the Notification to show the progress of video upload.
+     * Starts the Notification to show the progress of video download.
      */
     private void startNotification() {
         // Gets access to the Android Notification Service.
@@ -152,10 +159,10 @@ public class DownloadVideoService
         // operation of indeterminate length.
         mBuilder = new NotificationCompat
                        .Builder(this)
-                       .setContentTitle("Video Upload") 
-                       .setContentText("Upload in progress") 
-                       .setSmallIcon(android.R.drawable.stat_sys_upload)
-                       .setTicker("Uploading video")
+                       .setContentTitle("Video Download") 
+                       .setContentText("Download in progress") 
+                       .setSmallIcon(android.R.drawable.stat_sys_download)
+                       .setTicker("Downloading video")
                        .setProgress(0,
                                     0,
                                     true);

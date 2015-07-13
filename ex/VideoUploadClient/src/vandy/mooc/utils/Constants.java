@@ -23,4 +23,8 @@ public class Constants {
     public static final long MAX_SIZE_MEGA_BYTE = 50 * MEGA_BYTE;
     
     public static final String DATA_URL = "dataUrl";
+    
+    public static final String FILE_EXISTS = "fileExists";
+    
+    public static final String VIDEO_ID = "videoId";
 }

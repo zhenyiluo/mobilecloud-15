@@ -1,12 +1,14 @@
 package vandy.mooc.model.mediator;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.RestAdapter;
+import retrofit.client.Response;
 import retrofit.mime.TypedFile;
-
 import vandy.mooc.model.mediator.webdata.Video;
 import vandy.mooc.model.mediator.webdata.VideoServiceProxy;
 import vandy.mooc.model.mediator.webdata.VideoStatus;
@@ -61,6 +63,13 @@ public class VideoDataMediator {
             .build()
             .create(VideoServiceProxy.class);
     }
+    
+    public String downloadVideo(Context applicationContext, long id) throws IOException {
+		// TODO Auto-generated method stub
+    	Response response = mVideoServiceProxy.getData(id);
+    	InputStream videoData = response.getBody().in();
+		return null;
+	}
 
     /**
      * Uploads the Video having the given Id.  This Id is the Id of
@@ -138,4 +147,5 @@ public class VideoDataMediator {
     public List<Video> getVideoList() {
         return (ArrayList<Video>) mVideoServiceProxy.getVideoList();
     }
+
 }

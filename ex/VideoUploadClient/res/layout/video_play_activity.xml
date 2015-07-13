@@ -5,16 +5,18 @@
     android:orientation="vertical" >
     
     
+    <Button android:id="@+id/download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/download"
+        />
+    
     <Button android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/play"
         />
     
-    <Button android:id="@+id/download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/download"
-        />
+    
 
 </LinearLayout>

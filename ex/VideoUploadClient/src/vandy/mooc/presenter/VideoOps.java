@@ -10,6 +10,7 @@ import vandy.mooc.common.GenericAsyncTaskOps;
 import vandy.mooc.common.Utils;
 import vandy.mooc.model.mediator.VideoDataMediator;
 import vandy.mooc.model.mediator.webdata.Video;
+import vandy.mooc.model.services.DownloadVideoService;
 import vandy.mooc.model.services.UploadVideoService;
 import vandy.mooc.view.ui.VideoAdapter;
 import android.net.Uri;
@@ -137,10 +138,12 @@ public class VideoOps
                   videoUri));
     }
     
-    public void downloadVideo(Uri videoUri){
+    public void downloadVideo(long id){
     	// Sends an Intent command to the DownloadVideoService.
-    	// TODO
-//    	mVideoView.get().getActivityContext().startService();
+    	mVideoView.get().getActivityContext().startService(
+    			DownloadVideoService.makeIntent
+    			 (mVideoView.get().getApplicationContext(),
+    	                  id));
     }
 
     /**
