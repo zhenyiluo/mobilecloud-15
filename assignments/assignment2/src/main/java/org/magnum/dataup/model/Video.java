@@ -17,6 +17,7 @@
  */
 package org.magnum.dataup.model;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,10 +69,37 @@ public class Video {
 	private String location;
 	private String subject;
 	private String contentType;
-
+	@JsonIgnore
+	private List<Double> starRatings;
+	private double starRating;
+	
 	@JsonIgnore
 	private String dataUrl;
 
+	public double getStarRating(){
+		return starRating;
+	}
+	
+	public void setStarRating(double starRating){
+		this.starRating = starRating;
+	}
+	
+	public void addStarRatings(double starRating){
+		starRatings.add(starRating);
+	}
+	
+	public double calAvgStarRating(){
+		int num = starRatings.size();
+		if(num == 0){
+			return 0;
+		}
+		double sum = 0;
+		for(double d : starRatings){
+			sum += d;
+		}
+		return sum/num;
+	}
+	
 	public long getId() {
 		return id;
 	}

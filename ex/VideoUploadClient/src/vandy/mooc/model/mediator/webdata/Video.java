@@ -17,6 +17,7 @@ public class Video {
     private long duration;
     private String contentType;
     private String dataUrl;
+    private double starRating;
 	
     /**
      * No-op constructor
@@ -42,12 +43,14 @@ public class Video {
                  String title,
                  long duration,
                  String contentType,
-                 String dataUrl) {
+                 String dataUrl,
+                 double starRating) {
         this.id = id;
         this.title = title;
         this.duration = duration;
         this.contentType = contentType;
         this.dataUrl = dataUrl;
+        this.starRating = starRating;
     }
 
     /*
@@ -119,6 +122,22 @@ public class Video {
     public void setDataUrl(String dataUrl) {
         this.dataUrl = dataUrl;
     }
+    
+    /**
+     * Get the starRating of Video
+     * 
+     * @return starRating of Video
+     */
+    public double getStarRating(){
+    	return starRating;
+    }
+    
+    /**
+     * Set the starRating of the Video.
+     */
+    public void setStarRating(double starRating){
+    	this.starRating = starRating;
+    }
 
     /**
      * Get ContentType of Video.
@@ -146,7 +165,8 @@ public class Video {
             "Title: "+ title + ", "+
             "Duration: "+ duration + ", "+
             "ContentType: "+ contentType + ", "+
-            "Data URL: "+ dataUrl +
+            "Data URL: "+ dataUrl + ", "+
+            "Star Rating: "+ starRating +
             "}";
     }
 

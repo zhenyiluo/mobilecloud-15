@@ -77,7 +77,7 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 				boolean fromUser) {
 	 
 				// TODO
-				txtAvgRatingValue.setText(String.valueOf(rating));
+//				txtAvgRatingValue.setText(String.valueOf(rating));
 			}
 		});
 		
@@ -95,6 +95,8 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 				Toast.makeText(VideoPlayActivity.this,
 					String.valueOf(ratingBar.getRating()),
 						Toast.LENGTH_SHORT).show();
+				
+				
 	 
 			}
 	 

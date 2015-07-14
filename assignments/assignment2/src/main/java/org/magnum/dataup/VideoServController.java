@@ -135,6 +135,11 @@ public class VideoServController {
 	private void checkAndSetId(Video entity) {
 		if (entity.getId() == 0) {
 			entity.setId(currentId.incrementAndGet());
+		}else{
+			// add ratings
+			entity.addStarRatings(entity.getStarRating());
+			double avgRating = entity.calAvgStarRating();
+			entity.setStarRating(avgRating);
 		}
 	}
 
