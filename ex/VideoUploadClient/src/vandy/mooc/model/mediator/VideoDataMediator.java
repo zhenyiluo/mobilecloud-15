@@ -86,16 +86,11 @@ public class VideoDataMediator {
     	return STATUS_DOWNLOAD_SUCCESSFUL;
 	}
 
-    public String updateVideo(Context context, 
-    							Bundle bundle){
-    	String filePath = bundle.getString(Constants.DATA_URL);
-    	Video androidVideo =
-                VideoMediaStoreUtils.getVideo(context,
-                                              filePath);
-    	Video receivedVideo =
-                mVideoServiceProxy.addVideo(androidVideo);
-    	return STATUS_UPDATE_SUCCESSFUL;
+    public Video updateVideo(Context context, 
+    							Video video){
+    	return mVideoServiceProxy.addVideo(video);
     }
+    
     /**
      * Uploads the Video having the given Id.  This Id is the Id of
      * Video in Android Video Content Provider.

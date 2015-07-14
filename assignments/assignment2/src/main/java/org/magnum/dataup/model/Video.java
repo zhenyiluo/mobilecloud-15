@@ -17,6 +17,7 @@
  */
 package org.magnum.dataup.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,6 +62,7 @@ public class Video {
 		public VideoBuilder withDuration(long duration);
 		public VideoBuilder withSubject(String subject);
 		public VideoBuilder withContentType(String contentType);
+		public VideoBuilder withStarRating(double starRating);
 	}
 
 	private long id;
@@ -70,8 +72,12 @@ public class Video {
 	private String subject;
 	private String contentType;
 	@JsonIgnore
-	private List<Double> starRatings;
+	private static List<Double> starRatings;
 	private double starRating;
+	
+	static{
+		starRatings = new ArrayList<Double>();
+	}
 	
 	@JsonIgnore
 	private String dataUrl;

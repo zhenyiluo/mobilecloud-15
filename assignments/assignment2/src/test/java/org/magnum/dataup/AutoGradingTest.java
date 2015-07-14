@@ -69,6 +69,8 @@ import retrofit.client.Response;
 import retrofit.mime.TypedFile;
 
 public class AutoGradingTest {
+	
+	private static final double DELTA = 1e-6;
 
 	private static final String SERVER = "http://localhost:8080";
 
@@ -77,7 +79,7 @@ public class AutoGradingTest {
 	
 	private Video video = Video.create().withContentType("video/mp4")
 			.withDuration(123).withSubject(UUID.randomUUID().toString())
-			.withTitle(UUID.randomUUID().toString()).build();
+			.withTitle(UUID.randomUUID().toString()).withStarRating(0.0).build();
 
 	private VideoSvcApi videoSvc = new RestAdapter.Builder()
 			.setEndpoint(SERVER).build()
@@ -106,6 +108,7 @@ public class AutoGradingTest {
 		assertEquals(video.getContentType(), received.getContentType());
 		assertEquals(video.getLocation(), received.getLocation());
 		assertEquals(video.getSubject(), received.getSubject());
+		assertEquals(video.getStarRating(), received.getStarRating(), DELTA);
 		assertTrue(received.getId() > 0);
 		assertTrue(received.getDataUrl() != null);
 	}

@@ -126,6 +126,7 @@ public class VideoListActivity
 				intent.putExtra(Constants.DATA_URL, dataUrl);
 				intent.putExtra(Constants.FILE_EXISTS, fileVideo.exists());
 				intent.putExtra(Constants.VIDEO_ID, video.getId());
+				intent.putExtra(Constants.POSITION, position);
 				
 				startActivity(intent);
 				

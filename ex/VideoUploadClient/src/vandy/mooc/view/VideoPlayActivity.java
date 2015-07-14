@@ -2,13 +2,14 @@ package vandy.mooc.view;
 
 import vandy.mooc.R;
 import vandy.mooc.common.GenericActivity;
+import vandy.mooc.model.mediator.webdata.Video;
 import vandy.mooc.presenter.VideoOps;
 import vandy.mooc.utils.Constants;
 import vandy.mooc.view.ui.VideoAdapter;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -95,9 +96,16 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 				Toast.makeText(VideoPlayActivity.this,
 					String.valueOf(ratingBar.getRating()),
 						Toast.LENGTH_SHORT).show();
-				
-				
-	 
+				String dataUrl = bundle.getString(Constants.DATA_URL);
+				int position = bundle.getInt(Constants.POSITION);
+				Bundle data = new Bundle();
+				data.putString(Constants.DATA_URL, dataUrl);
+				data.putInt(Constants.POSITION, position);
+				StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+			    StrictMode.setThreadPolicy(policy);
+				Video video = getOps().updateVideo(data);
+				double starRating = video.getStarRating();
+				txtAvgRatingValue.setText(String.valueOf(starRating));
 			}
 	 
 		});

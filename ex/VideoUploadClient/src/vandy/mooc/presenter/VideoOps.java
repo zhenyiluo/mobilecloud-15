@@ -12,6 +12,7 @@ import vandy.mooc.model.mediator.VideoDataMediator;
 import vandy.mooc.model.mediator.webdata.Video;
 import vandy.mooc.model.services.DownloadVideoService;
 import vandy.mooc.model.services.UploadVideoService;
+import vandy.mooc.utils.Constants;
 import vandy.mooc.view.ui.VideoAdapter;
 import android.content.Intent;
 import android.net.Uri;
@@ -125,6 +126,14 @@ public class VideoOps
         
         // Set the adapter to the ListView.
         mVideoView.get().setAdapter(mAdapter);
+    }
+    
+    public Video updateVideo(Bundle bundle){
+    	int position = bundle.getInt(Constants.POSITION);
+    	Video oldVideo = mAdapter.getItem(position);
+    	Video video = mVideoMediator.updateVideo(mVideoView.get().getApplicationContext(), oldVideo);
+    	mAdapter.getVideos().set(position, video);
+    	return video;
     }
 
     /**
