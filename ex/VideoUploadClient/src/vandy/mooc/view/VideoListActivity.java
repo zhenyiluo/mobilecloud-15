@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -127,6 +128,7 @@ public class VideoListActivity
 				intent.putExtra(Constants.FILE_EXISTS, fileVideo.exists());
 				intent.putExtra(Constants.VIDEO_ID, video.getId());
 				intent.putExtra(Constants.POSITION, position);
+				intent.putExtra(Constants.RATING, video.getStarRating());
 				
 				startActivity(intent);
 				
@@ -163,7 +165,7 @@ public class VideoListActivity
     protected void onResume() {
         // Call up to the superclass.
         super.onResume();
-
+        getOps().getVideoList();
         // Register BroadcastReceiver that receives result from
         // UploadVideoService when a video upload completes.
         registerReceiver();

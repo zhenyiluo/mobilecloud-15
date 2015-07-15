@@ -1,5 +1,7 @@
 package vandy.mooc.view;
 
+import java.text.DecimalFormat;
+
 import vandy.mooc.R;
 import vandy.mooc.common.GenericActivity;
 import vandy.mooc.model.mediator.webdata.Video;
@@ -16,7 +18,6 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps> 
 						implements VideoOps.View{
@@ -72,43 +73,29 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 		
 		txtAvgRatingValue = (TextView) findViewById(R.id.txtAvgRatingValue);
 		ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+		double rating = bundle.getDouble(Constants.RATING);
+		ratingBar.setRating((float) rating);
+		txtAvgRatingValue.setText(new DecimalFormat("#0.00").format(rating));
 		
 		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 				boolean fromUser) {
 	 
-				// TODO
-//				txtAvgRatingValue.setText(String.valueOf(rating));
-			}
-		});
-		
-		
-		
-		
-		Button btnSubmit = (Button) findViewById(R.id.btnSubmit);
-		 
-		//if click on me, then display the current rating value.
-		btnSubmit.setOnClickListener(new OnClickListener() {
-	 
-			@Override
-			public void onClick(View v) {
-	 
-				Toast.makeText(VideoPlayActivity.this,
-					String.valueOf(ratingBar.getRating()),
-						Toast.LENGTH_SHORT).show();
 				String dataUrl = bundle.getString(Constants.DATA_URL);
 				int position = bundle.getInt(Constants.POSITION);
 				Bundle data = new Bundle();
 				data.putString(Constants.DATA_URL, dataUrl);
 				data.putInt(Constants.POSITION, position);
+				data.putDouble(Constants.RATING, ratingBar.getRating());
 				StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 			    StrictMode.setThreadPolicy(policy);
 				Video video = getOps().updateVideo(data);
 				double starRating = video.getStarRating();
-				txtAvgRatingValue.setText(String.valueOf(starRating));
+				txtAvgRatingValue.setText(new DecimalFormat("#0.00").format(starRating));
+				ratingBar.setRating((float)starRating);
 			}
-	 
 		});
+		
 		
 		// Invoke the special onCreate() method in GenericActivity,
         // passing in the VideoOps class to instantiate/manage and

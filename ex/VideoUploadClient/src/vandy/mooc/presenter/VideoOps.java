@@ -120,19 +120,24 @@ public class VideoOps
             mAdapter = 
                  new VideoAdapter(mVideoView.get().getApplicationContext());
 
-            // Get the VideoList from Server. 
-            getVideoList();
+            
         }
         
+        // Get the VideoList from Server. 
+        getVideoList();
         // Set the adapter to the ListView.
         mVideoView.get().setAdapter(mAdapter);
     }
     
     public Video updateVideo(Bundle bundle){
     	int position = bundle.getInt(Constants.POSITION);
+    	double rating = bundle.getDouble(Constants.RATING);
     	Video oldVideo = mAdapter.getItem(position);
+    	oldVideo.setStarRating(rating);
     	Video video = mVideoMediator.updateVideo(mVideoView.get().getApplicationContext(), oldVideo);
     	mAdapter.getVideos().set(position, video);
+    	mAdapter.notifyDataSetChanged();
+    	mVideoView.get().setAdapter(mAdapter);
     	return video;
     }
 

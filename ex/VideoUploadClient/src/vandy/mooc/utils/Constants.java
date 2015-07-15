@@ -31,4 +31,6 @@ public class Constants {
     public static final String BUNDLE = "bundle";
     
     public static final String POSITION = "position";
+    
+    public static final String RATING = "rating";
 }
