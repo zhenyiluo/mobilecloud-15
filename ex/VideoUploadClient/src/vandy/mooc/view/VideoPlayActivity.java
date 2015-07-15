@@ -5,13 +5,19 @@ import java.text.DecimalFormat;
 import vandy.mooc.R;
 import vandy.mooc.common.GenericActivity;
 import vandy.mooc.model.mediator.webdata.Video;
+import vandy.mooc.model.services.DownloadVideoService;
+import vandy.mooc.model.services.UploadVideoService;
 import vandy.mooc.presenter.VideoOps;
 import vandy.mooc.utils.Constants;
 import vandy.mooc.view.ui.VideoAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -24,12 +30,17 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 
 	private RatingBar ratingBar;
 	private TextView txtAvgRatingValue;
+	private Button downloadButton;
+	private Button playButton;
+	private DownloadResultReceiver mDownloadResultReceiver;
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		
+		
+		
 		setContentView(R.layout.video_play_activity);
 		
-		Button downloadButton = (Button) findViewById(R.id.download);
+		downloadButton = (Button) findViewById(R.id.download);
 		
 		final Bundle bundle = getIntent().getExtras();
 		
@@ -49,7 +60,7 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 			}
 		});
 		
-		Button playButton = (Button) findViewById(R.id.play);
+		playButton = (Button) findViewById(R.id.play);
 		
 		playButton.setOnClickListener(new OnClickListener() {
 			
@@ -96,6 +107,9 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 			}
 		});
 		
+		// Receiver for the notification.
+        mDownloadResultReceiver =
+            new DownloadResultReceiver();
 		
 		// Invoke the special onCreate() method in GenericActivity,
         // passing in the VideoOps class to instantiate/manage and
@@ -110,4 +124,56 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 		// TODO Auto-generated method stub
 		// Do nothing.
 	}
+	
+	 /**
+     *  Hook method that is called when user resumes activity
+     *  from paused state, onPause(). 
+     */
+    @Override
+    protected void onResume() {
+        // Call up to the superclass.
+        super.onResume();
+        // Register BroadcastReceiver that receives result from
+        // DownloadVideoService when a video upload completes.
+        registerReceiver();
+    }
+	
+	/**
+     * Register a BroadcastReceiver that receives a result from the
+     * DownloadVideoService when a video upload completes.
+     */
+    private void registerReceiver() {
+        
+        // Create an Intent filter that handles Intents from the
+        // DownloadVideoService.
+        IntentFilter intentFilter =
+            new IntentFilter(DownloadVideoService.ACTION_DOWNLOAD_SERVICE_RESPONSE);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        // Register the BroadcastReceiver.
+        LocalBroadcastManager.getInstance(this)
+               .registerReceiver(mDownloadResultReceiver,
+                                 intentFilter);
+    }
+    
+	/*
+	 * The Broadcast Receiver that registers itself to receive result
+     * from DownloadVideoService.
+     */
+    private class DownloadResultReceiver 
+            extends BroadcastReceiver {
+        /**
+         * Hook method that's dispatched when the DownloadService has
+         * downloaded the Video.
+         */
+        @Override
+        public void onReceive(Context context,
+                              Intent intent) {
+            // Starts an AsyncTask to get fresh Video list from the
+            // Video Service.
+//            getOps().getVideoList();
+        	playButton.setEnabled(true);
+        	downloadButton.setEnabled(false);
+        }
+    }
 }
