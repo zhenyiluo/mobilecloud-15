@@ -18,8 +18,10 @@
 package org.magnum.dataup;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -64,6 +66,7 @@ public class VideoServController {
 	 * 
 	 */
 	private Map<Long, Video> videos = new HashMap<Long, Video>();
+	private Map<Long, List<Double>> videoRatings = new HashMap<Long, List<Double>>();
 	private static final AtomicLong currentId = new AtomicLong(0L);
 	private static VideoFileManager videoDataMgr;
 
@@ -125,7 +128,19 @@ public class VideoServController {
 		response.addHeader("Content-Type", v.getContentType());
 		videoDataMgr.copyVideoData(v, response.getOutputStream());
 	}
-
+	
+	public double calAvgStarRating(List<Double> starRatings){
+		int num = starRatings.size();
+		if(num == 0){
+			return 0;
+		}
+		double sum = 0;
+		for(double d : starRatings){
+			sum += d;
+		}
+		return sum/num;
+	}
+	
 	public Video save(Video entity) {
 		checkAndSetId(entity);
 		videos.put(entity.getId(), entity);
@@ -135,10 +150,11 @@ public class VideoServController {
 	private void checkAndSetId(Video entity) {
 		if (entity.getId() == 0) {
 			entity.setId(currentId.incrementAndGet());
+			videoRatings.put(entity.getId(), new ArrayList<Double>());
 		}else{
 			// add ratings
-			entity.addStarRatings(entity.getStarRating());
-			double avgRating = entity.calAvgStarRating();
+			videoRatings.get(entity.getId()).add(entity.getStarRating());
+			double avgRating = calAvgStarRating(videoRatings.get(entity.getId()));
 			entity.setStarRating(avgRating);
 		}
 	}

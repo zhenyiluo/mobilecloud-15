@@ -72,15 +72,15 @@ public class Video {
 	private String subject;
 	private String contentType;
 	@JsonIgnore
-	private static List<Double> starRatings;
+	private List<Double> starRatings;
 	private double starRating;
-	
-	static{
-		starRatings = new ArrayList<Double>();
-	}
 	
 	@JsonIgnore
 	private String dataUrl;
+	
+	public void initStarRatings(){
+		starRatings = new ArrayList<Double>();
+	}
 
 	public double getStarRating(){
 		return starRating;
@@ -92,18 +92,6 @@ public class Video {
 	
 	public void addStarRatings(double starRating){
 		starRatings.add(starRating);
-	}
-	
-	public double calAvgStarRating(){
-		int num = starRatings.size();
-		if(num == 0){
-			return 0;
-		}
-		double sum = 0;
-		for(double d : starRatings){
-			sum += d;
-		}
-		return sum/num;
 	}
 	
 	public long getId() {
