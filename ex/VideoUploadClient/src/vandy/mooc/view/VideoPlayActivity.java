@@ -14,13 +14,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
@@ -33,6 +37,7 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 	private Button downloadButton;
 	private Button playButton;
 	private DownloadResultReceiver mDownloadResultReceiver;
+	private ImageView imageView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		
@@ -40,9 +45,14 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 		
 		setContentView(R.layout.video_play_activity);
 		
+		imageView = (ImageView) findViewById(R.id.imageView);
+		
 		downloadButton = (Button) findViewById(R.id.download);
 		
 		final Bundle bundle = getIntent().getExtras();
+		String dataUrl = bundle.getString(Constants.DATA_URL);
+		Bitmap bMap = ThumbnailUtils.createVideoThumbnail(dataUrl, MediaStore.Video.Thumbnails.MINI_KIND);
+		imageView.setImageBitmap(bMap);
 		
 		boolean fileExists = bundle.getBoolean(Constants.FILE_EXISTS);
 		
