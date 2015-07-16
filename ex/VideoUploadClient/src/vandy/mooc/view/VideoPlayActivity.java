@@ -38,6 +38,8 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 	private Button playButton;
 	private DownloadResultReceiver mDownloadResultReceiver;
 	private ImageView imageView;
+	private Bitmap bMap;
+	private String dataUrl;
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		
@@ -50,8 +52,8 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 		downloadButton = (Button) findViewById(R.id.download);
 		
 		final Bundle bundle = getIntent().getExtras();
-		String dataUrl = bundle.getString(Constants.DATA_URL);
-		Bitmap bMap = ThumbnailUtils.createVideoThumbnail(dataUrl, MediaStore.Video.Thumbnails.MINI_KIND);
+		dataUrl = bundle.getString(Constants.DATA_URL);
+		bMap = ThumbnailUtils.createVideoThumbnail(dataUrl, MediaStore.Video.Thumbnails.MINI_KIND);
 		imageView.setImageBitmap(bMap);
 		
 		boolean fileExists = bundle.getBoolean(Constants.FILE_EXISTS);
@@ -184,6 +186,8 @@ public class VideoPlayActivity extends GenericActivity<VideoOps.View, VideoOps>
 //            getOps().getVideoList();
         	playButton.setEnabled(true);
         	downloadButton.setEnabled(false);
+        	bMap = ThumbnailUtils.createVideoThumbnail(dataUrl, MediaStore.Video.Thumbnails.MINI_KIND);
+    		imageView.setImageBitmap(bMap);
         }
     }
 }
